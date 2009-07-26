@@ -17,8 +17,8 @@
     <SccAuxPath>
     </SccAuxPath>
     <SccProvider>MSSCCI:Surround SCM</SccProvider>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>GeoFrameworks.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>CodePlex.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -87,6 +87,7 @@
     <Compile Include="Xml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CodePlex.snk" />
     <None Include="GeoFrameworks.snk" />
   </ItemGroup>
   <ItemGroup>

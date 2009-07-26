@@ -17,9 +17,8 @@
     <SccAuxPath>
     </SccAuxPath>
     <SccProvider>MSSCCI:Surround SCM</SccProvider>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>CodePlex.snk</AssemblyOriginatorKeyFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -68,6 +67,9 @@
     <Compile Include="Type Converters\RectangleDConverter.cs" />
     <Compile Include="Type Converters\SizeDConverter.cs" />
     <Compile Include="Type Converters\SpeedConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CodePlex.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
