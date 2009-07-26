@@ -14,7 +14,7 @@ namespace GeoFramework
     /// Earth's surface.
     /// </summary>
 #if !PocketPC || DesignTime
-    [TypeConverter("GeoFramework.Design.DistanceConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=3ed3cdf4fdda3400")]
+    [TypeConverter("GeoFramework.Design.DistanceConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=d77afaeb30e3236a")]
 #endif
     public struct Distance : IFormattable, IComparable<Distance>, IEquatable<Distance>, IXmlSerializable
     {

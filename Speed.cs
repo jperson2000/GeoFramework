@@ -29,7 +29,7 @@ namespace GeoFramework
     ///     immutable (its properties can only be modified via constructors).</para>
     /// </remarks>
 #if !PocketPC || DesignTime
-    [TypeConverter("GeoFramework.Design.SpeedConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=3ed3cdf4fdda3400")]
+    [TypeConverter("GeoFramework.Design.SpeedConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=d77afaeb30e3236a")]
 #endif
     public struct Speed : IFormattable, IComparable<Speed>, IEquatable<Speed>, IXmlSerializable
     {

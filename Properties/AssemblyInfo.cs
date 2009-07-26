@@ -51,7 +51,7 @@ using System.Runtime.ConstrainedExecution;
  * up to the assemblies to use on the mobile device.
  */
 #if DesignTime && !Framework20
-    [assembly: System.CF.Design.RuntimeAssembly("GeoFramework.PocketPC, Version=1.4.5000.7, Culture=neutral, PublicKeyToken=3ed3cdf4fdda3400")]
+    [assembly: System.CF.Design.RuntimeAssembly("GeoFramework.PocketPC, Version=1.4.5000.7, Culture=neutral, PublicKeyToken=d77afaeb30e3236a")]
 #endif
 
 /* Thisd assembly contains language-specific resources.  Help the CLR find them. */

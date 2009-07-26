@@ -51,7 +51,7 @@ namespace GeoFramework
 	///     </code>
 	/// </example>
 #if !PocketPC || DesignTime
-    [TypeConverter("GeoFramework.Design.LatitudeConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=3ed3cdf4fdda3400")]
+    [TypeConverter("GeoFramework.Design.LatitudeConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=d77afaeb30e3236a")]
 #endif
     public struct Latitude : IFormattable, IComparable<Latitude>, IEquatable<Latitude>, ICloneable<Latitude>, IXmlSerializable
     {

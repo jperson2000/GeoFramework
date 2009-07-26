@@ -48,7 +48,7 @@ namespace GeoFramework
     /// three-dimensional direction towards an object in space, such as a GPS satellite.
     /// </remarks>
 #if !PocketPC || DesignTime
-    [TypeConverter("GeoFramework.Design.AzimuthConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=3ed3cdf4fdda3400")]
+    [TypeConverter("GeoFramework.Design.AzimuthConverter, GeoFramework.Design, Culture=neutral, Version=2.0.0.0, PublicKeyToken=d77afaeb30e3236a")]
 #endif
     public struct Azimuth : IFormattable, IComparable<Azimuth>, IEquatable<Azimuth>, IEquatable<Direction>, ICloneable<Azimuth>, IXmlSerializable
     {
