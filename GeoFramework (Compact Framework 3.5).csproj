@@ -56,6 +56,7 @@
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\CF35\GeoFramework.PocketPC.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Angle.cs" />
@@ -112,7 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodePlex.snk" />
-    <None Include="GeoFrameworks.snk" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
