@@ -12,11 +12,14 @@
     <AssemblyName>GeoFramework</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SurroundSCMScci</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <SccAuxPath>
     </SccAuxPath>
-    <SccProvider>MSSCCI:Surround SCM</SccProvider>
+    <SccProvider>
+    </SccProvider>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CodePlex.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -88,7 +91,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodePlex.snk" />
-    <None Include="GeoFrameworks.snk" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.DF35.resx">

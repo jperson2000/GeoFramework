@@ -18,11 +18,14 @@
     <NativePlatformName>Windows Mobile 5.0 Pocket PC SDK</NativePlatformName>
     <FormFactorID>
     </FormFactorID>
-    <SccProjectName>SurroundSCMScci</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <SccAuxPath>
     </SccAuxPath>
-    <SccProvider>MSSCCI:Surround SCM</SccProvider>
+    <SccProvider>
+    </SccProvider>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CodePlex.snk</AssemblyOriginatorKeyFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -70,11 +73,19 @@
     <Compile Include="Interpolator.cs" />
     <Compile Include="Interpolator2D.cs" />
     <Compile Include="Latitude.cs" />
+    <Compile Include="Licensing\License.cs" />
+    <Compile Include="Licensing\LicenseContext.cs" />
+    <Compile Include="Licensing\LicenseManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Licensing\LicenseProvider.cs" />
     <Compile Include="Longitude.cs" />
+    <Compile Include="Matrix.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Percent.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PointD.cs" />
+    <Compile Include="PointF.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Position3D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,6 +95,8 @@
       <DependentUpon>Resources.CF35.resx</DependentUpon>
     </Compile>
     <Compile Include="Radian.cs" />
+    <Compile Include="RectangleD.cs" />
+    <Compile Include="RectangleFHelper.cs" />
     <Compile Include="Segment.cs" />
     <Compile Include="SizeD.cs" />
     <Compile Include="Speed.cs" />
@@ -125,7 +138,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(DevEnvDir)..\..\..\Microsoft Visual Studio 8\SDK\v2.0\Bin\gacutil.exe" /i "$(TargetPath)"
+    <PostBuildEvent>REM "$(DevEnvDir)..\..\..\Microsoft Visual Studio 8\SDK\v2.0\Bin\gacutil.exe" /i "$(TargetPath)"
 
 </PostBuildEvent>
     <PreBuildEvent>
