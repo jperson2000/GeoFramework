@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodePlex.snk" />
-    <None Include="GeoFrameworks.snk" />
   </ItemGroup>
   <Import Condition="'$(TargetFrameworkVersion)' == 'v1.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.v1.targets" />
   <Import Condition="'$(TargetFrameworkVersion)' == 'v2.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
