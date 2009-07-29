@@ -12,11 +12,14 @@
     <AssemblyName>GeoFramework.Design</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SurroundSCMScci</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <SccAuxPath>
     </SccAuxPath>
-    <SccProvider>MSSCCI:Surround SCM</SccProvider>
+    <SccProvider>
+    </SccProvider>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CodePlex.snk</AssemblyOriginatorKeyFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
