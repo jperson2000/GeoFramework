@@ -2852,6 +2852,9 @@ return
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             // Output as latitude and longitude
             return Latitude.ToString(format, culture) 
                 + culture.TextInfo.ListSeparator

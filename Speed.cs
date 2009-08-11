@@ -1090,6 +1090,9 @@ namespace GeoFramework
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             int StartChar = 0;
             int EndChar = 0;
             string SubFormat = null;

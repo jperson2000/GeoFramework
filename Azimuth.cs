@@ -2232,6 +2232,9 @@ Math.Round(
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             // Prevent null values
             if (format == null) format = "G";
             // Convert to upper case

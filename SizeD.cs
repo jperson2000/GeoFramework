@@ -287,6 +287,10 @@ namespace GeoFramework
         public string ToString(string format, IFormatProvider formatProvider)
 		{
             CultureInfo culture = formatProvider as CultureInfo;
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             if (formatProvider == null)
                 culture = CultureInfo.CurrentCulture;
             return Width.ToString(format, culture)

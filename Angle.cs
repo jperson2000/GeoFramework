@@ -1773,6 +1773,9 @@ Math.Round(
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             if (format == null || format.Length == 0)
                 format = "G";
 

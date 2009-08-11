@@ -427,6 +427,10 @@ namespace GeoFramework
         public string ToString(string format, IFormatProvider formatProvider)
         {
             CultureInfo culture = (CultureInfo)formatProvider;
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             return _X.ToString(format, formatProvider)
                 + culture.TextInfo.ListSeparator
                 + _Y.ToString(format, formatProvider);
