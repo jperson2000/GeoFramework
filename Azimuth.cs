@@ -1243,8 +1243,8 @@ Math.Round(
             if (obj is Azimuth)
                 return Equals((Azimuth)obj);
 
-            // Nothing else will work, so False
-            return false;
+            // Compare degree value
+            return _DecimalDegrees.Equals(obj);
         }
 
         /// <summary>Returns a unique code for this instance.</summary>
