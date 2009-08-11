@@ -1616,6 +1616,9 @@ namespace GeoFramework
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             try
             {
                 // Validate values

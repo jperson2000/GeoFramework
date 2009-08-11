@@ -397,6 +397,9 @@ namespace GeoFramework
         {
             CultureInfo culture = (CultureInfo)formatProvider;
 
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
             // Output as latitude and longitude
             return _Position.ToString(format, culture)
                 + culture.TextInfo.ListSeparator
