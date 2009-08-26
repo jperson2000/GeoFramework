@@ -1017,7 +1017,7 @@ namespace GeoFramework
         /// the current speed for the specified length of time.</returns>
         public Speed ToSpeed(TimeSpan time)
         {
-            return new Speed(ToMeters().Value / time.TotalMilliseconds / 1000.0, SpeedUnit.MetersPerSecond).ToLocalUnitType();
+            return new Speed(ToMeters().Value / (time.TotalMilliseconds / 1000.0), SpeedUnit.MetersPerSecond).ToLocalUnitType();
         }
 
         /// <summary>
