@@ -31,19 +31,19 @@ using System.Runtime.ConstrainedExecution;
 
 #if Framework30
 		// .NET Framework 3.5
-		[assembly: AssemblyVersion("2.0.0.0")]
+		[assembly: AssemblyVersion("2.0.1.*")]
 		[assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2008")]
 #elif Framework20
     // .NET Framework 2.0
-    [assembly: AssemblyVersion("2.0.0.0")]
+    [assembly: AssemblyVersion("2.0.1.*")]
     [assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2005")]
 #elif Framework10
 		// .NET Framework 1.0
-		[assembly: AssemblyVersion("2.0.0.0")]
+		[assembly: AssemblyVersion("2.0.1.*")]
 		[assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2002")]
 #else
 		// .NET Framework 1.1
-		[assembly: AssemblyVersion("2.0.0.0")]
+		[assembly: AssemblyVersion("2.0.1.*")]
 		[assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2003")]
 #endif
 
