@@ -581,6 +581,13 @@ Math.Round(
             get { return double.IsNaN(_DecimalDegrees); }
         }
 
+        /// <summary>Indicates whether the current instance has been normalized and is within the 
+        /// allowed bounds of -90° and 90°.</summary>
+        public bool IsNormalized
+        {
+            get { return _DecimalDegrees >= -90 && _DecimalDegrees <= 90; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -592,7 +599,7 @@ Math.Round(
             // Is the value not a number, infinity, or already normalized?
             if (double.IsInfinity(_DecimalDegrees)
                 || double.IsNaN(_DecimalDegrees)
-                || (_DecimalDegrees >= -90 && _DecimalDegrees <= 90))
+                || IsNormalized)
                 return this;
 
             // Calculate the number of times the degree value winds completely 
