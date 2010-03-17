@@ -856,6 +856,13 @@ Math.Round(
             get { return double.IsNaN(_DecimalDegrees); }
         }
 
+        /// <summary>Indicates whether the value has been normalized and is within the 
+        /// allowed bounds of -180° and 180°.</summary>
+        public bool IsNormalized
+        {
+            get { return _DecimalDegrees >= -180 && _DecimalDegrees <= 180; }
+        }
+
         #endregion
 
         #region Public Methods

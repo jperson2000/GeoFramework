@@ -264,6 +264,16 @@ namespace GeoFramework
             }
         }
 
+        /// <summary>Indicates whether the position has been normalized and is within the 
+        /// allowed bounds of -90° and 90° latitude and -180° and 180° longitude.</summary>
+        public bool IsNormalized
+        {
+            get
+            {
+                return _Latitude.IsNormalized && _Longitude.IsNormalized;
+            }
+        }
+
         #endregion
 
         #region Public Methods
