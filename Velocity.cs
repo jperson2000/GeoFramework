@@ -14,9 +14,19 @@ namespace GeoFramework
     {
         private readonly Speed _Speed;
         private readonly Azimuth _Bearing;
-
-        #region  Constructors 
         
+        #region Fields
+
+        /// <summary>Represents a velocity with no speed or direction.</summary>
+        public static readonly Velocity Empty = new Velocity(Speed.Empty, Azimuth.Empty);
+
+        /// <summary>Represents a velocity with an invalid or unspecified speed and direction.</summary>
+        public static readonly Velocity Invalid = new Velocity(Speed.Invalid, Azimuth.Invalid);
+
+        #endregion
+
+        #region  Constructors
+
         public Velocity(Speed speed, Azimuth bearing)
         {
             _Speed = speed;
