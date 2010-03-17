@@ -69,6 +69,7 @@
     <Compile Include="SizeD.cs" />
     <Compile Include="Speed.cs" />
     <Compile Include="StaticFinalizer.cs" />
+    <Compile Include="Velocity.cs" />
     <Compile Include="Xml.cs" />
   </ItemGroup>
   <ItemGroup>
