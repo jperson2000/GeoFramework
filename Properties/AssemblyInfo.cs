@@ -29,7 +29,11 @@ using System.Runtime.ConstrainedExecution;
  * have no revision number because that would require much code change for each release.
  * We only care about the major version number and VS version numbers. */
 
-#if Framework30
+#if Framework40
+		// .NET Framework 4.0
+		[assembly: AssemblyVersion("2.0.1.*")]
+		[assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2010")]
+#elif Framework30
 		// .NET Framework 3.5
 		[assembly: AssemblyVersion("2.0.1.*")]
 		[assembly: AssemblyDescription("This assembly provides objects used to design geographic applications using Visual Studio 2008")]
@@ -71,7 +75,9 @@ using System.Runtime.ConstrainedExecution;
 	    [assembly: AssemblyConfiguration("Public Release for .NET Compact Framework 1.0")]
     #endif
 #else
-    #if Framework30
+    #if Framework40
+        [assembly: AssemblyConfiguration("Public Release for .NET Framework 4.0")]
+    #elif Framework30
         [assembly: AssemblyConfiguration("Public Release for .NET Framework 3.5")]
     #elif Framework20
         [assembly: AssemblyConfiguration("Public Release for .NET Framework 2.0")]
@@ -98,6 +104,9 @@ using System.Runtime.ConstrainedExecution;
  */
 #if !PocketPC || DesignTime
 
+// CAS permission declarations are obsolted in .Net 4.0
+#if !Framework40
+
     // Grant only the minimum security permissions
     [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
     // Grant only the minimum required reflection permissions
@@ -108,6 +117,9 @@ using System.Runtime.ConstrainedExecution;
     [assembly: FileIOPermission(SecurityAction.RequestRefuse)]
     // We want only the minimum permissions necessary
     [assembly: PermissionSet(SecurityAction.RequestMinimum, Unrestricted = false)]
+
+#endif
+
     // Allow partially-trusted callers to use this code (such as ASP.NET)
     [assembly: AllowPartiallyTrustedCallers()]
 
