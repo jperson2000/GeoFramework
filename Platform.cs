@@ -55,6 +55,10 @@ namespace GeoFramework
         /// .NET framework version 3.0 (Visual Studio 2008) is being used.
         /// </summary>
         DesktopFramework30 = 6,
+        /// <summary>
+        /// .NET framework version 4.0 (Visual Studio 2010) is being used.
+        /// </summary>
+        DesktopFramework40 = 7,
 		/// <summary>
         /// .NET Compact Framework version 1.0 (Visual Studio 2003) is being used.
         /// </summary>
@@ -85,6 +89,8 @@ namespace GeoFramework
         // Desktop Framework.  Which one?
 #if Framework10
             private static DotNetFrameworkID _DotNetFrameworkID = DotNetFrameworkID.DesktopFramework10;
+#elif Framework40
+        private static DotNetFrameworkID _DotNetFrameworkID = DotNetFrameworkID.DesktopFramework40;
 #elif Framework30
         private static DotNetFrameworkID _DotNetFrameworkID = DotNetFrameworkID.DesktopFramework30;
 #elif Framework20
