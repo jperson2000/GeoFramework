@@ -388,6 +388,9 @@ return
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
+            if (format == null || format.Length == 0)
+                format = "G";
+
             return _X.ToString(format, culture) + culture.TextInfo.ListSeparator
                 + _Y.ToString(format, culture) + culture.TextInfo.ListSeparator
                 + _Z.ToString(format, culture);

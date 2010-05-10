@@ -286,13 +286,14 @@ namespace GeoFramework
 
         public string ToString(string format, IFormatProvider formatProvider)
 		{
-            CultureInfo culture = formatProvider as CultureInfo;
+            CultureInfo culture = (CultureInfo)formatProvider;
 
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
-            if (formatProvider == null)
-                culture = CultureInfo.CurrentCulture;
+            if (format == null || format.Length == 0)
+                format = "G";
+
             return Width.ToString(format, culture)
                 + culture.TextInfo.ListSeparator + " "
                 + Height.ToString(format, culture);

@@ -181,6 +181,9 @@ namespace GeoFramework
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
+            if (format == null || format.Length == 0)
+                format = "G";
+
             // Output as speed and bearing
             return _Speed.ToString(format, culture)
                 + " "

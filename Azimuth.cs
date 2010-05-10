@@ -2242,8 +2242,9 @@ Math.Round(
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
-            // Prevent null values
-            if (format == null) format = "G";
+            if (format == null || format.Length == 0)
+                format = "G";
+
             // Convert to upper case
             format = format.ToUpper(culture);
             // Use a default format
