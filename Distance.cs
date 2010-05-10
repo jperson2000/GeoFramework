@@ -1619,14 +1619,11 @@ namespace GeoFramework
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
+            if (format == null || format.Length == 0)
+                format = "G";
+
             try
             {
-                // Validate values
-                if (format == null || format.Length == 0)
-                {
-                    format = "G";
-                }
-
                 // Use the default if "g" is passed
                 if (String.Compare(format, "g", true, culture) == 0)
                 {

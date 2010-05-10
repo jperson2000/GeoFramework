@@ -309,6 +309,9 @@ namespace GeoFramework
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
+            if (format == null || format.Length == 0)
+                format = "G";
+
             return _Width.ToString(format, culture)
                 + culture.TextInfo.ListSeparator + " "
                 + _Height.ToString(format, culture);

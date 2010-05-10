@@ -1093,6 +1093,9 @@ namespace GeoFramework
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
+            if (format == null || format.Length == 0)
+                format = "G";
+
             int StartChar = 0;
             int EndChar = 0;
             string SubFormat = null;

@@ -1631,10 +1631,8 @@ Math.Round(
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
 
-            if (format == null || format.Length == 0)
-                format = "G";
-
-            if (format == "g" || format == "G")
+            if (format == null || format.Length == 0
+                || format == "g" || format == "G")
                 format = "e";
 
             if (format == "e")
