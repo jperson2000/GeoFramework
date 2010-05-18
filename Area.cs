@@ -41,8 +41,8 @@ namespace GeoFramework
 #endif
 	public struct Area : IFormattable, IComparable<Area>, IEquatable<Area>, IXmlSerializable
     {
-        private readonly double _Value;
-		private readonly AreaUnit _Units;
+        private double _Value;
+		private AreaUnit _Units;
 
         #region Constants
 
@@ -385,11 +385,12 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Area(XmlReader reader)
         {
-            while (reader.NodeType == XmlNodeType.None || reader.NodeType == XmlNodeType.XmlDeclaration)
-                reader.Read();
+            // Initialize all fields
+            _Value = Double.NaN;
+            _Units = 0;
 
-            _Units = (AreaUnit)Enum.Parse(typeof(AreaUnit), reader.ReadElementContentAsString(), true);
-            _Value = reader.ReadElementContentAsDouble();
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
 		#endregion
@@ -1951,9 +1952,14 @@ namespace GeoFramework
             writer.WriteElementString("Value", _Value.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Area(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            // Move to the <Units> element
+            if (!reader.IsStartElement("Units"))
+                reader.ReadToDescendant("Units");
+
+            _Units = (AreaUnit)Enum.Parse(typeof(AreaUnit), reader.ReadElementContentAsString(), true);
+            _Value = reader.ReadElementContentAsDouble();
         }
 
         #endregion

@@ -20,8 +20,8 @@ namespace GeoFramework
 #endif
     public struct Position : IFormattable, IEquatable<Position>, ICloneable<Position>, IXmlSerializable
     {
-        private readonly Latitude _Latitude;
-        private readonly Longitude _Longitude;
+        private Latitude _Latitude;
+        private Longitude _Longitude;
                 
         #region Constants
 
@@ -156,78 +156,12 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Position(XmlReader reader)
         {
-            /* The position class uses the GML 3.0 specification for XML.
-             * 
-             * <gml:pos>X Y</gml:pos>
-             *
-             * ... but it is also helpful to be able to READ older versions
-             * of GML, such as this one for GML 2.0:
-             * 
-             * <gml:coord>
-             *      <gml:X>double</gml:X>
-             *      <gml:Y>double</gml:Y>  // optional
-             *      <gml:Z>double</gml:Z>  // optional
-             * </gml:coord>
-             * 
-             */
-
+            // Initialize all fields
             _Latitude = Latitude.Invalid;
             _Longitude = Longitude.Invalid;
 
-            switch (reader.LocalName)
-            {
-                case "pos":
-                    // Read the "X Y" string, then split by the space between them
-                    string[] Values = reader.ReadElementContentAsString().Split(' ');
-                    // Deserialize the longitude
-                    _Longitude = new Longitude(double.Parse(Values[0], CultureInfo.InvariantCulture));
-                    // Deserialize the latitude
-                    if (Values.Length > 1)
-                        _Latitude = new Latitude(double.Parse(Values[1], CultureInfo.InvariantCulture));
-                    break;
-                case "coordinates":
-                    // Read the "X Y" string, then split by the space between them
-                    string[] CoordSets = reader.ReadElementContentAsString().Split(' ');
-                    string[] Coords = CoordSets[0].Split(',');
-                    // Deserialize the longitude
-                    _Longitude = new Longitude(double.Parse(Coords[0], CultureInfo.InvariantCulture));
-                    // Deserialize the latitude
-                    if (Coords.Length > 1)
-                        _Latitude = new Latitude(double.Parse(Coords[1], CultureInfo.InvariantCulture));
-                    break;
-                case "coord":
-                    // Read the <gml:coord> start tag
-                    reader.ReadStartElement();
-                    // Now read up to 3 elements: X, and optionally Y or Z
-                    for (int index = 0; index < 3; index++)
-                    {
-                        /* According to the GML specification, a "gml:x" tag is lower-case.  However,
-                         * FWTools outputs tags in uppercase "gml:X".  As a result, make this 
-                         * test case-insensitive.
-                         */
-
-                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
-                        {
-                            case "x":
-                                _Longitude = new Longitude(reader.ReadElementContentAsDouble());
-                                break;
-                            case "y":
-                                _Latitude = new Latitude(reader.ReadElementContentAsDouble());
-                                break;
-                            case "z":
-                                // Skip Z
-                                reader.Skip();
-                                break;
-                        }
-
-                        // If we're at an end element, stop
-                        if (reader.NodeType == XmlNodeType.EndElement)
-                            break;
-                    }
-                    // Read the </gml:coord> end tag
-                    reader.ReadEndElement();
-                    break;
-            }
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
 		#endregion
@@ -2897,31 +2831,85 @@ return
             writer.WriteEndElement();
         }
 
-        ///// <summary>
-        ///// Sets the latitude for this instance.
-        ///// </summary>
-        ///// <param name="value"></param>
-        //protected void SetLatitude(Latitude value)
-        //{
-        //    _Latitude = value;
-        //}
-
-        ///// <summary>
-        ///// Sets the longitude for this instance.
-        ///// </summary>
-        ///// <param name="value"></param>
-        //protected void SetLongitude(Longitude value)
-        //{
-        //    _Longitude = value;
-        //}
-
-        //public void ReadXml(XmlReader reader)
-        //{
-        //}
-
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Position(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            /* The position class uses the GML 3.0 specification for XML.
+             * 
+             * <gml:pos>X Y</gml:pos>
+             *
+             * ... but it is also helpful to be able to READ older versions
+             * of GML, such as this one for GML 2.0:
+             * 
+             * <gml:coord>
+             *      <gml:X>double</gml:X>
+             *      <gml:Y>double</gml:Y>  // optional
+             *      <gml:Z>double</gml:Z>  // optional
+             * </gml:coord>
+             * 
+             */
+
+            _Latitude = Latitude.Invalid;
+            _Longitude = Longitude.Invalid;
+
+            // Move to the <gml:pos> or <gml:coord> element
+            if (!reader.IsStartElement("pos", Xml.GmlXmlNamespace)
+                && !reader.IsStartElement("coord", Xml.GmlXmlNamespace))
+                reader.ReadStartElement();
+
+            switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+            {
+                case "pos":
+                    // Read the "X Y" string, then split by the space between them
+                    string[] Values = reader.ReadElementContentAsString().Split(' ');
+                    // Deserialize the longitude
+                    _Longitude = new Longitude(double.Parse(Values[0], CultureInfo.InvariantCulture));
+                    // Deserialize the latitude
+                    if (Values.Length > 1)
+                        _Latitude = new Latitude(double.Parse(Values[1], CultureInfo.InvariantCulture));
+                    break;
+                case "coordinates":
+                    // Read the "X Y" string, then split by the space between them
+                    string[] CoordSets = reader.ReadElementContentAsString().Split(' ');
+                    string[] Coords = CoordSets[0].Split(',');
+                    // Deserialize the longitude
+                    _Longitude = new Longitude(double.Parse(Coords[0], CultureInfo.InvariantCulture));
+                    // Deserialize the latitude
+                    if (Coords.Length > 1)
+                        _Latitude = new Latitude(double.Parse(Coords[1], CultureInfo.InvariantCulture));
+                    break;
+                case "coord":
+                    // Read the <gml:coord> start tag
+                    reader.ReadStartElement();
+                    // Now read up to 3 elements: X, and optionally Y or Z
+                    for (int index = 0; index < 3; index++)
+                    {
+                        /* According to the GML specification, a "gml:x" tag is lower-case.  However,
+                         * FWTools outputs tags in uppercase "gml:X".  As a result, make this 
+                         * test case-insensitive.
+                         */
+
+                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+                        {
+                            case "x":
+                                _Longitude = new Longitude(reader.ReadElementContentAsDouble());
+                                break;
+                            case "y":
+                                _Latitude = new Latitude(reader.ReadElementContentAsDouble());
+                                break;
+                            case "z":
+                                // Skip Z
+                                reader.Skip();
+                                break;
+                        }
+
+                        // If we're at an end element, stop
+                        if (reader.NodeType == XmlNodeType.EndElement)
+                            break;
+                    }
+                    // Read the </gml:coord> end tag
+                    reader.ReadEndElement();
+                    break;
+            }
         }
 
         #endregion

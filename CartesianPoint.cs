@@ -15,9 +15,9 @@ namespace GeoFramework
 #endif
     public struct CartesianPoint : IFormattable, IEquatable<CartesianPoint>, IXmlSerializable
     {
-        private readonly Distance _X;
-        private readonly Distance _Y;
-        private readonly Distance _Z;
+        private Distance _X;
+        private Distance _Y;
+        private Distance _Z;
 
         #region Constructors
 
@@ -40,70 +40,13 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public CartesianPoint(XmlReader reader)
         {
-            /* The position class uses the GML 3.0 specification for XML.
-             * 
-             * <gml:pos>X Y Z</gml:pos>
-             *
-             * ... but it is also helpful to be able to READ older versions
-             * of GML, such as this one for GML 2.0:
-             * 
-             * <gml:coord>
-             *      <gml:X>double</gml:X>
-             *      <gml:Y>double</gml:Y>  // optional
-             *      <gml:Z>double</gml:Z>  // optional
-             * </gml:coord>
-             * 
-             */
+            // Initialize all fields
+            _X = Distance.Invalid;
+            _Y = Distance.Invalid;
+            _Z = Distance.Invalid;
 
-            // .NET whines if we don't fully assign all values
-            _X = Distance.Empty;
-            _Y = Distance.Empty;
-            _Z = Distance.Empty;
-
-            switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
-            {
-                case "pos":
-                    // Read the "X Y" string, then split by the space between them
-                    string[] Values = reader.ReadElementContentAsString().Split(' ');
-                    // Deserialize the X
-                    _X = Distance.FromMeters(double.Parse(Values[0], CultureInfo.InvariantCulture));
-                    // Deserialize the Y
-                    if (Values.Length == 2)
-                        _Y = Distance.FromMeters(double.Parse(Values[1], CultureInfo.InvariantCulture));
-                    // Deserialize the Z
-                    if (Values.Length == 3)
-                        _Z = Distance.FromMeters(double.Parse(Values[2], CultureInfo.InvariantCulture));
-                    break;
-                case "coord":
-                    // Read the <gml:coord> start tag
-                    reader.ReadStartElement();
-                    // Now read up to 3 elements: X, and optionally Y or Z
-                    for (int index = 0; index < 3; index++)
-                    {
-                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
-                        {
-                            case "x":
-                                // Read X as meters (there's no unit type in the spec :P morons)
-                                _X = Distance.FromMeters(reader.ReadElementContentAsDouble());
-                                break;
-                            case "y":
-                                // Read Y as meters (there's no unit type in the spec :P morons)
-                                _Y = Distance.FromMeters(reader.ReadElementContentAsDouble());
-                                break;
-                            case "z":
-                                // Read Z as meters (there's no unit type in the spec :P morons)
-                                _Z = Distance.FromMeters(reader.ReadElementContentAsDouble());
-                                break;
-                        }
-
-                        // If we're at an end element, stop
-                        if (reader.NodeType == XmlNodeType.EndElement)
-                            break;
-                    }
-                    // Read the </gml:coord> end tag
-                    reader.ReadEndElement();
-                    break;
-            }
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -432,9 +375,80 @@ return
             writer.WriteEndElement();
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the CartesianPoint(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            /* The position class uses the GML 3.0 specification for XML.
+             * 
+             * <gml:pos>X Y Z</gml:pos>
+             *
+             * ... but it is also helpful to be able to READ older versions
+             * of GML, such as this one for GML 2.0:
+             * 
+             * <gml:coord>
+             *      <gml:X>double</gml:X>
+             *      <gml:Y>double</gml:Y>  // optional
+             *      <gml:Z>double</gml:Z>  // optional
+             * </gml:coord>
+             * 
+             */
+
+            // .NET whines if we don't fully assign all values
+            _X = Distance.Empty;
+            _Y = Distance.Empty;
+            _Z = Distance.Empty;
+            
+            // Move to the <gml:pos> or <gml:coord> element
+            if (!reader.IsStartElement("pos", Xml.GmlXmlNamespace) 
+                && !reader.IsStartElement("coord", Xml.GmlXmlNamespace))
+                reader.ReadStartElement();
+
+            switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+            {
+                case "pos":
+                    // Read the "X Y" string, then split by the space between them
+                    string[] Values = reader.ReadElementContentAsString().Split(' ');
+                    // Deserialize the X
+                    _X = Distance.FromMeters(double.Parse(Values[0], CultureInfo.InvariantCulture));
+
+                    // Deserialize the Y
+                    if (Values.Length >= 2)
+                        _Y = Distance.FromMeters(double.Parse(Values[1], CultureInfo.InvariantCulture));
+
+                    // Deserialize the Z
+                    if (Values.Length == 3)
+                        _Z = Distance.FromMeters(double.Parse(Values[2], CultureInfo.InvariantCulture));
+
+                    break;
+                case "coord":
+                    // Read the <gml:coord> start tag
+                    reader.ReadStartElement();
+                    // Now read up to 3 elements: X, and optionally Y or Z
+                    for (int index = 0; index < 3; index++)
+                    {
+                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+                        {
+                            case "x":
+                                // Read X as meters (there's no unit type in the spec :P morons)
+                                _X = Distance.FromMeters(reader.ReadElementContentAsDouble());
+                                break;
+                            case "y":
+                                // Read Y as meters (there's no unit type in the spec :P morons)
+                                _Y = Distance.FromMeters(reader.ReadElementContentAsDouble());
+                                break;
+                            case "z":
+                                // Read Z as meters (there's no unit type in the spec :P morons)
+                                _Z = Distance.FromMeters(reader.ReadElementContentAsDouble());
+                                break;
+                        }
+
+                        // If we're at an end element, stop
+                        if (reader.NodeType == XmlNodeType.EndElement)
+                            break;
+                    }
+                    // Read the </gml:coord> end tag
+                    reader.ReadEndElement();
+                    break;
+            }
         }
 
         #endregion

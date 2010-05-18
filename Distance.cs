@@ -18,8 +18,8 @@ namespace GeoFramework
 #endif
     public struct Distance : IFormattable, IComparable<Distance>, IEquatable<Distance>, IXmlSerializable
     {
-        private readonly double _Value;
-        private readonly DistanceUnit _Units;
+        private double _Value;
+        private DistanceUnit _Units;
 
         #region Constants
 
@@ -310,10 +310,12 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Distance(XmlReader reader)
         {
-            while (reader.NodeType == XmlNodeType.None || reader.NodeType == XmlNodeType.XmlDeclaration)
-                reader.Read();
-            _Units = (DistanceUnit)Enum.Parse(typeof(DistanceUnit), reader.ReadElementContentAsString(), true);
-            _Value = reader.ReadElementContentAsDouble();
+            // Initialize all fields
+            _Value = Double.NaN;
+            _Units = 0;
+
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -1800,9 +1802,14 @@ namespace GeoFramework
             writer.WriteElementString("Value", _Value.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Distance(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            // Move to the <Units> element
+            if (!reader.IsStartElement("Units"))
+                reader.ReadToDescendant("Units");
+
+            _Units = (DistanceUnit)Enum.Parse(typeof(DistanceUnit), reader.ReadElementContentAsString(), true);
+            _Value = reader.ReadElementContentAsDouble();
         }
 
         #endregion

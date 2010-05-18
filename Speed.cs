@@ -33,8 +33,8 @@ namespace GeoFramework
 #endif
     public struct Speed : IFormattable, IComparable<Speed>, IEquatable<Speed>, IXmlSerializable
     {
-        private readonly double _Value;
-        private readonly SpeedUnit _Units;
+        private double _Value;
+        private SpeedUnit _Units;
 
         #region Constants
 
@@ -335,11 +335,12 @@ namespace GeoFramework
 
         public Speed(XmlReader reader)
         {
-            while (reader.NodeType == XmlNodeType.None || reader.NodeType == XmlNodeType.XmlDeclaration)
-                reader.Read();
-
-            _Units = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), reader.ReadElementContentAsString(), false);
-            _Value = reader.ReadElementContentAsDouble();
+            // Initialize all fields
+            _Value = Double.NaN;
+            _Units = 0;
+            
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -1253,9 +1254,14 @@ namespace GeoFramework
             writer.WriteElementString("Value", _Value.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Speed(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            // Move to the <Units> element
+            if (!reader.IsStartElement("Units"))
+                reader.ReadToDescendant("Units");
+
+            _Units = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), reader.ReadElementContentAsString(), false);
+            _Value = reader.ReadElementContentAsDouble();
         }
 
         #endregion

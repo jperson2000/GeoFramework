@@ -22,8 +22,8 @@ namespace GeoFramework
 #endif
     public struct SizeD : IFormattable, IEquatable<SizeD>, IXmlSerializable
     {
-        private readonly double _Width;
-        private readonly double _Height;
+        private double _Width;
+        private double _Height;
 
         #region Fields
 
@@ -79,10 +79,12 @@ namespace GeoFramework
 
         public SizeD(XmlReader reader)
         {
-            _Width = double.Parse(
-                reader.GetAttribute("Width"), CultureInfo.InvariantCulture);
-            _Height = double.Parse(
-                reader.GetAttribute("Height"), CultureInfo.InvariantCulture);
+            // Initialize all fields
+            _Width = Double.NaN;
+            _Height = Double.NaN;
+
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -316,9 +318,12 @@ namespace GeoFramework
                         _Height.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the SizeD(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            _Width = double.Parse(
+                reader.GetAttribute("Width"), CultureInfo.InvariantCulture);
+            _Height = double.Parse(
+                reader.GetAttribute("Height"), CultureInfo.InvariantCulture);
         }
 
         #endregion

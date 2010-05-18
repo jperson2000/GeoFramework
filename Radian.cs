@@ -27,7 +27,7 @@ namespace GeoFramework
 #endif
     public struct Radian : IFormattable, IEquatable<Radian>, IComparable<Radian>, IXmlSerializable
     {
-        private readonly double _Value;
+        private double _Value;
 
         #region Constants
 
@@ -78,7 +78,11 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Radian(XmlReader reader)
         {
-            _Value = reader.ReadElementContentAsDouble();
+            // Initialize all fields
+            _Value = Double.NaN;
+
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -579,9 +583,12 @@ namespace GeoFramework
             writer.WriteString(_Value.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Radian(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            if (reader.NodeType == XmlNodeType.Text)
+                _Value = reader.ReadContentAsDouble();
+            else
+                _Value = reader.ReadElementContentAsDouble();
         }
 
         #endregion
