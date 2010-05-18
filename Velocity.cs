@@ -1,5 +1,8 @@
 using System;
 using System.Globalization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace GeoFramework
 {
@@ -10,10 +13,10 @@ namespace GeoFramework
     ///     <para>Instances of this class are guaranteed to be thread-safe because the class is
     ///     immutable (its properties can only be changed via constructors).</para>
     /// </remarks>
-    public struct Velocity : IFormattable, IEquatable<Velocity>, ICloneable<Velocity>
+    public struct Velocity : IFormattable, IEquatable<Velocity>, ICloneable<Velocity>, IXmlSerializable
     {
-        private readonly Speed _Speed;
-        private readonly Azimuth _Bearing;
+        private Speed _Speed;
+        private Azimuth _Bearing;
         
         #region Fields
 
@@ -65,6 +68,16 @@ namespace GeoFramework
         {
             _Speed = new Speed(speed, culture);
             _Bearing = new Azimuth(bearing, culture);
+        }
+
+        public Velocity(XmlReader reader)
+        {
+            // Initialize all fields
+            _Speed = Speed.Invalid;
+            _Bearing = Azimuth.Invalid;
+
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -188,6 +201,41 @@ namespace GeoFramework
             return _Speed.ToString(format, culture)
                 + " "
                 + _Bearing.ToString(format, culture);
+        }
+
+        #endregion
+
+        #region IXmlSerializable Members
+
+        XmlSchema IXmlSerializable.GetSchema()
+        {
+            return null;
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Speed");
+            _Speed.WriteXml(writer);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Bearing");
+            _Bearing.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            // Move to the <Speed> element
+            if (!reader.IsStartElement("Speed"))
+                reader.ReadToDescendant("Speed");
+
+            reader.ReadStartElement();
+            _Speed.ReadXml(reader);
+            reader.ReadEndElement();
+
+            reader.ReadStartElement();
+            _Bearing.ReadXml(reader);
+            reader.ReadEndElement();
         }
 
         #endregion

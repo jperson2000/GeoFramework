@@ -14,8 +14,8 @@ namespace GeoFramework
 	/// </remarks>
     public struct Position3D : IFormattable, IEquatable<Position3D>, ICloneable<Position3D>, IXmlSerializable
     {
-        private readonly Position _Position;
-        private readonly Distance _Altitude;
+        private Position _Position;
+        private Distance _Altitude;
 
 		#region  Constructors 
         
@@ -106,81 +106,12 @@ namespace GeoFramework
 
         public Position3D(XmlReader reader)
         {
-            /* The position class uses the GML 3.0 specification for XML.
-             * 
-             * <gml:pos>X Y</gml:pos>
-             *
-             * ... but it is also helpful to be able to READ older versions
-             * of GML, such as this one for GML 2.0:
-             * 
-             * <gml:coord>
-             *      <gml:X>double</gml:X>
-             *      <gml:Y>double</gml:Y>  // optional
-             *      <gml:Z>double</gml:Z>  // optional
-             * </gml:coord>
-             * 
-             */
+            // Initialize all fields
+            _Position = Position.Invalid;
+            _Altitude = Distance.Invalid;
 
-            // .NET Complains if we don't assign values
-            _Position = Position.Empty;
-            _Altitude = Distance.Empty;
-
-            Longitude longitude = Longitude.Empty;
-            Latitude latitude = Latitude.Empty;
-
-            switch (reader.LocalName.ToLower())
-            {
-                case "pos":
-                    // Read the "X Y" string, then split by the space between them
-                    string[] Values = reader.ReadElementContentAsString().Split(' ');
-                    // Deserialize the longitude
-                    longitude = new Longitude(Values[0], CultureInfo.InvariantCulture);
-
-                    // Deserialize the latitude
-                    if (Values.Length == 2)
-                        latitude = new Latitude(Values[1], CultureInfo.InvariantCulture);
-
-                    // Deserialize the altitude
-                    if (Values.Length == 3)
-                        _Altitude = Distance.FromMeters(double.Parse(Values[1], CultureInfo.InvariantCulture));
-
-                    // Make the position
-                    _Position = new Position(latitude, longitude);
-                    break;
-                case "coord":
-                    // Read the <gml:coord> start tag
-                    reader.ReadStartElement();
-
-                    // Now read up to 3 elements: X, and optionally Y or Z
-                    for (int index = 0; index < 3; index++)
-                    {
-
-                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
-                        {
-                            case "x":
-                                longitude = new Longitude(reader.ReadElementContentAsDouble());
-                                break;
-                            case "y":
-                                latitude = new Latitude(reader.ReadElementContentAsDouble());
-                                break;
-                            case "z":
-                                // Read Z as meters (there's no unit type in the spec :P morons)
-                                _Altitude = Distance.FromMeters(reader.ReadElementContentAsDouble());
-                                break;
-                        }
-
-                        // If we're at an end element, stop
-                        if (reader.NodeType == XmlNodeType.EndElement)
-                            break;
-                    }
-
-                    // Make the position
-                    _Position = new Position(latitude, longitude);
-
-                    // Read the </gml:coord> end tag
-                    reader.ReadEndElement();
-                    break;
-            }
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
 		#endregion
@@ -348,8 +279,87 @@ namespace GeoFramework
             writer.WriteEndElement();
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
+            /* The position class uses the GML 3.0 specification for XML.
+             * 
+             * <gml:pos>X Y</gml:pos>
+             *
+             * ... but it is also helpful to be able to READ older versions
+             * of GML, such as this one for GML 2.0:
+             * 
+             * <gml:coord>
+             *      <gml:X>double</gml:X>
+             *      <gml:Y>double</gml:Y>  // optional
+             *      <gml:Z>double</gml:Z>  // optional
+             * </gml:coord>
+             * 
+             */
+
+            // .NET Complains if we don't assign values
+            _Position = Position.Empty;
+            _Altitude = Distance.Empty;
+            Longitude longitude = Longitude.Empty;
+            Latitude latitude = Latitude.Empty;
+
+            // Move to the <gml:pos> or <gml:coord> element
+            if (!reader.IsStartElement("pos", Xml.GmlXmlNamespace)
+                && !reader.IsStartElement("coord", Xml.GmlXmlNamespace))
+                reader.ReadStartElement();
+
+            switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+            {
+                case "pos":
+                    // Read the "X Y" string, then split by the space between them
+                    string[] Values = reader.ReadElementContentAsString().Split(' ');
+                    // Deserialize the longitude
+                    longitude = new Longitude(Values[0], CultureInfo.InvariantCulture);
+
+                    // Deserialize the latitude
+                    if (Values.Length >= 2)
+                        latitude = new Latitude(Values[1], CultureInfo.InvariantCulture);
+
+                    // Deserialize the altitude
+                    if (Values.Length == 3)
+                        _Altitude = Distance.FromMeters(double.Parse(Values[2], CultureInfo.InvariantCulture));
+
+                    // Make the position
+                    _Position = new Position(latitude, longitude);
+                    break;
+                case "coord":
+                    // Read the <gml:coord> start tag
+                    reader.ReadStartElement();
+
+                    // Now read up to 3 elements: X, and optionally Y or Z
+                    for (int index = 0; index < 3; index++)
+                    {
+
+                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+                        {
+                            case "x":
+                                longitude = new Longitude(reader.ReadElementContentAsDouble());
+                                break;
+                            case "y":
+                                latitude = new Latitude(reader.ReadElementContentAsDouble());
+                                break;
+                            case "z":
+                                // Read Z as meters (there's no unit type in the spec :P morons)
+                                _Altitude = Distance.FromMeters(reader.ReadElementContentAsDouble());
+                                break;
+                        }
+
+                        // If we're at an end element, stop
+                        if (reader.NodeType == XmlNodeType.EndElement)
+                            break;
+                    }
+
+                    // Make the position
+                    _Position = new Position(latitude, longitude);
+
+                    // Read the </gml:coord> end tag
+                    reader.ReadEndElement();
+                    break;
+            }
         }
 
         #endregion

@@ -26,11 +26,11 @@ namespace GeoFramework
 #endif
     public struct GeographicRectangle : IFormattable, IEquatable<GeographicRectangle>, IXmlSerializable
     {
-        private readonly Latitude _Top;
-        private readonly Latitude _Bottom;
-        private readonly Longitude _Left;
-        private readonly Longitude _Right;
-        private readonly Position _Center;
+        private Latitude _Top;
+        private Latitude _Bottom;
+        private Longitude _Left;
+        private Longitude _Right;
+        private Position _Center;
 
         #region Fields
 
@@ -391,166 +391,15 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public GeographicRectangle(XmlReader reader)
         {
-            /* This class uses the GML 3.0 object "gml:envelope" to serialize
-              * its information.  The format is as follows:
-              * 
-              * <gml:envelope>
-              *      <lowerCorner><gml:pos>X Y</gml:pos></lowerCorner>
-              *      <upperCorner><gml:pos>X Y</gml:pos></lowerCorner>
-              * </gml:envelope>
-              * 
-              * ... but we should also de-serialize deprecated or nested values, such as:
-              * 
-              * <gml:boundedBy><gml:Envelope /></gml:boundedBy>
-              * <gml:box><gml:x /><gml:y /></gml:box>
-              * 
-              * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. The
-              * first direct position is the "lower corner" (a coordinate position consisting of all the minimal ordinates for each
-              * dimension for all points within the envelope), the second one the "upper corner" (a coordinate position
-              * consisting of all the maximal ordinates for each dimension for all points within the envelope).
-              * 
-              */
-
-            _Top = Latitude.Empty;
-            _Bottom = Latitude.Empty;
-            _Left = Longitude.Empty;
-            _Right = Longitude.Empty;
+            // Initialize all fields
+            _Top = Latitude.Invalid;
+            _Bottom = Latitude.Invalid;
+            _Left = Longitude.Invalid;
+            _Right = Longitude.Invalid;
             _Center = Position.Invalid;
 
-            switch (reader.LocalName)
-            {
-                case "Envelope":   // gml:Envelope  Initial Caps
-
-                    #region <gml:Envelope>
-
-                    Position southWest = Position.Invalid;
-                    Position northEast = Position.Invalid;
-
-                    // Read the element, <gml:envelope>
-                    reader.ReadStartElement();
-
-                    // Read the next two elements, either "lowerCorner" or "upperCorner"
-                    for (int index = 0; index < 2; index++)
-                    {
-                        switch (reader.LocalName)
-                        {
-                            case "pos":
-                                // There is probably one or two <gml:pos> objects
-                                if (southWest.IsInvalid)
-                                    southWest = new Position(reader);
-                                else
-                                    northEast = new Position(reader);
-                                break;
-                            case "lowerCorner":
-                                // Read the start element, <lowerCorner>
-                                reader.ReadStartElement();
-
-                                // Read the position
-                                southWest = new Position(reader);
-
-                                // Read the end element </lowerCorner>
-                                reader.ReadEndElement();
-                                break;
-                            case "upperCorner":
-                                // Read the start element, <lowerCorner>
-                                reader.ReadStartElement();
-
-                                // Read the position
-                                northEast = new Position(reader);
-
-                                // Read the end element </lowerCorner>
-                                reader.ReadEndElement();
-                                break;
-                            default:
-                                // Skip this unknown element
-                                break;
-                        }
-                    }
-
-                    // Calculate bounds
-                    _Left = southWest.Longitude < northEast.Longitude ? southWest.Longitude : northEast.Longitude;
-                    _Right = northEast.Longitude > southWest.Longitude ? northEast.Longitude : southWest.Longitude;
-                    _Top = northEast.Latitude > southWest.Latitude ? northEast.Latitude : southWest.Latitude;
-                    _Bottom = southWest.Latitude < northEast.Latitude ? southWest.Latitude : northEast.Latitude;
-
-                    // Lastly, calculate the center
-                    _Center = Position.Invalid;
-                    _Center = Hypotenuse.Midpoint;
-
-                    // Read the end element, </gml:envelope>
-                    reader.ReadEndElement();
-
-                    #endregion
-
-                    return;
-                case "boundedBy":   // gml:boundedBy   camel Case
-
-                    #region <gml:boundedBy>
-
-                    // Read the start element, <gml:boundedBy>
-                    reader.ReadStartElement();
-
-                    // Make a recursive call into here to read <gml:envelope>
-                    GeographicRectangle value = new GeographicRectangle(reader);
-
-                    // Copy the values
-                    _Left = value.Left;
-                    _Top = value.Top;
-                    _Right = value.Right;
-                    _Bottom = value.Bottom;
-                    _Center = value.Center;
-
-                    // Read the end element, </gml:boundedBy>
-                    reader.ReadEndElement();
-
-                    #endregion
-
-                    return;
-                case "Box":     // <gml:Box>  Initial Caps
-
-                    #region <gml:Box>
-
-                    // Read the start element, <gml:boundedBy>
-                    reader.ReadStartElement();
-
-                    // Read the coordinates
-                    Position Corner1 = new Position(reader);
-                    Position Corner2 = new Position(reader);
-
-                    // Set the values
-                    if (Corner1.Latitude < Corner2.Latitude)
-                    {
-                        _Bottom = Corner1.Latitude;
-                        _Top = Corner2.Latitude;
-                    }
-                    else
-                    {
-                        _Bottom = Corner2.Latitude;
-                        _Top = Corner1.Latitude;
-                    }
-
-                    if (Corner1.Longitude < Corner2.Longitude)
-                    {
-                        _Left = Corner1.Longitude;
-                        _Right = Corner2.Longitude;
-                    }
-                    else
-                    {
-                        _Left = Corner2.Longitude;
-                        _Right = Corner1.Longitude;
-                    }
-
-                    // Lastly, calculate the center
-                    _Center = Position.Invalid;
-                    _Center = Hypotenuse.Midpoint;
-
-                    // Read the end element, </gml:boundedBy>
-                    reader.ReadEndElement();
-
-                    #endregion
-
-                    return;
-            }
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
 		#endregion
@@ -1486,9 +1335,175 @@ namespace GeoFramework
             writer.WriteEndElement();
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the GeographicRectangle(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            /* This class uses the GML 3.0 object "gml:envelope" to serialize
+              * its information.  The format is as follows:
+              * 
+              * <gml:envelope>
+              *      <lowerCorner><gml:pos>X Y</gml:pos></lowerCorner>
+              *      <upperCorner><gml:pos>X Y</gml:pos></lowerCorner>
+              * </gml:envelope>
+              * 
+              * ... but we should also de-serialize deprecated or nested values, such as:
+              * 
+              * <gml:boundedBy><gml:Envelope /></gml:boundedBy>
+              * <gml:box><gml:x /><gml:y /></gml:box>
+              * 
+              * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. The
+              * first direct position is the "lower corner" (a coordinate position consisting of all the minimal ordinates for each
+              * dimension for all points within the envelope), the second one the "upper corner" (a coordinate position
+              * consisting of all the maximal ordinates for each dimension for all points within the envelope).
+              * 
+              */
+
+            _Top = Latitude.Empty;
+            _Bottom = Latitude.Empty;
+            _Left = Longitude.Empty;
+            _Right = Longitude.Empty;
+            _Center = Position.Invalid;
+
+            // Move to the <gml:Envelope>, <gml:boundedBy>, or <gml:Box> element
+            if (!reader.IsStartElement("envelope", Xml.GmlXmlNamespace)
+                && !reader.IsStartElement("Envelope", Xml.GmlXmlNamespace)
+                && !reader.IsStartElement("boundedBy", Xml.GmlXmlNamespace)
+                && !reader.IsStartElement("Box", Xml.GmlXmlNamespace))
+                reader.ReadStartElement();
+
+            switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+            {
+                case "envelope":
+
+                    #region <gml:Envelope>
+
+                    Position southWest = Position.Invalid;
+                    Position northEast = Position.Invalid;
+
+                    // Read the element, <gml:envelope>
+                    reader.ReadStartElement();
+
+                    // Read the next two elements, either "lowerCorner" or "upperCorner"
+                    for (int index = 0; index < 2; index++)
+                    {
+                        switch (reader.LocalName.ToLower(CultureInfo.InvariantCulture))
+                        {
+                            case "pos":
+                                // There is probably one or two <gml:pos> objects
+                                if (southWest.IsInvalid)
+                                    southWest = new Position(reader);
+                                else
+                                    northEast = new Position(reader);
+                                break;
+                            case "lowercorner":
+                                // Read the start element, <lowerCorner>
+                                reader.ReadStartElement();
+
+                                // Read the position
+                                southWest = new Position(reader);
+
+                                // Read the end element </lowerCorner>
+                                reader.ReadEndElement();
+                                break;
+                            case "uppercorner":
+                                // Read the start element, <lowerCorner>
+                                reader.ReadStartElement();
+
+                                // Read the position
+                                northEast = new Position(reader);
+
+                                // Read the end element </lowerCorner>
+                                reader.ReadEndElement();
+                                break;
+                            default:
+                                // Skip this unknown element
+                                break;
+                        }
+                    }
+
+                    // Calculate bounds
+                    _Left = southWest.Longitude < northEast.Longitude ? southWest.Longitude : northEast.Longitude;
+                    _Right = northEast.Longitude > southWest.Longitude ? northEast.Longitude : southWest.Longitude;
+                    _Top = northEast.Latitude > southWest.Latitude ? northEast.Latitude : southWest.Latitude;
+                    _Bottom = southWest.Latitude < northEast.Latitude ? southWest.Latitude : northEast.Latitude;
+
+                    // Lastly, calculate the center
+                    _Center = Position.Invalid;
+                    _Center = Hypotenuse.Midpoint;
+
+                    // Read the end element, </gml:envelope>
+                    reader.ReadEndElement();
+
+                    #endregion
+
+                    return;
+                case "boundedby":
+
+                    #region <gml:boundedBy>
+
+                    // Read the start element, <gml:boundedBy>
+                    reader.ReadStartElement();
+
+                    // Make a recursive call into here to read <gml:envelope>
+                    GeographicRectangle value = new GeographicRectangle(reader);
+
+                    // Copy the values
+                    _Left = value.Left;
+                    _Top = value.Top;
+                    _Right = value.Right;
+                    _Bottom = value.Bottom;
+                    _Center = value.Center;
+
+                    // Read the end element, </gml:boundedBy>
+                    reader.ReadEndElement();
+
+                    #endregion
+
+                    return;
+                case "box":
+
+                    #region <gml:Box>
+
+                    // Read the start element, <gml:boundedBy>
+                    reader.ReadStartElement();
+
+                    // Read the coordinates
+                    Position Corner1 = new Position(reader);
+                    Position Corner2 = new Position(reader);
+
+                    // Set the values
+                    if (Corner1.Latitude < Corner2.Latitude)
+                    {
+                        _Bottom = Corner1.Latitude;
+                        _Top = Corner2.Latitude;
+                    }
+                    else
+                    {
+                        _Bottom = Corner2.Latitude;
+                        _Top = Corner1.Latitude;
+                    }
+
+                    if (Corner1.Longitude < Corner2.Longitude)
+                    {
+                        _Left = Corner1.Longitude;
+                        _Right = Corner2.Longitude;
+                    }
+                    else
+                    {
+                        _Left = Corner2.Longitude;
+                        _Right = Corner1.Longitude;
+                    }
+
+                    // Lastly, calculate the center
+                    _Center = Position.Invalid;
+                    _Center = Hypotenuse.Midpoint;
+
+                    // Read the end element, </gml:boundedBy>
+                    reader.ReadEndElement();
+
+                    #endregion
+
+                    return;
+            }
         }
 
         #endregion

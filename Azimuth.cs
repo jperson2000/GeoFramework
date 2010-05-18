@@ -52,7 +52,7 @@ namespace GeoFramework
 #endif
     public struct Azimuth : IFormattable, IComparable<Azimuth>, IEquatable<Azimuth>, IEquatable<Direction>, ICloneable<Azimuth>, IXmlSerializable
     {
-        private readonly double _DecimalDegrees;
+        private double _DecimalDegrees;
         
         #region Constants
 
@@ -396,7 +396,11 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Azimuth(XmlReader reader)
         {
-            _DecimalDegrees = reader.ReadElementContentAsDouble();
+            // Initialize all fields
+            _DecimalDegrees = Double.NaN;
+
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -2501,9 +2505,12 @@ Math.Round(
             writer.WriteString(_DecimalDegrees.ToString("G17", CultureInfo.InvariantCulture));
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Azimuth(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            if (reader.NodeType == XmlNodeType.Text)
+                _DecimalDegrees = reader.ReadContentAsDouble();
+            else
+                _DecimalDegrees = reader.ReadElementContentAsDouble();
         }
 
         #endregion

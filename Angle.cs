@@ -58,7 +58,7 @@ namespace GeoFramework
 #endif
     public struct Angle : IFormattable, IComparable<Angle>, IEquatable<Angle>, ICloneable<Angle>, IXmlSerializable
     {      
-        private readonly double _DecimalDegrees;
+        private double _DecimalDegrees;
 
         #region Constants
 
@@ -352,16 +352,11 @@ namespace GeoFramework
         /// <param name="reader"></param>
         public Angle(XmlReader reader)
         {
-            /* This class conforms to GML version 3.0.  
-             * 
-             * <gml:angle uom="degrees">123.45678</gml:angle>
-             * 
-            */
+            // Initialize all fields
+            _DecimalDegrees = Double.NaN;
 
-            // I'm going to assume for now that the unit of measure is degrees.
-
-            // Read in the element content
-            _DecimalDegrees = reader.ReadElementContentAsDouble();
+            // Deserialize the object from XML
+            ReadXml(reader);
         }
 
         #endregion
@@ -1926,9 +1921,21 @@ Math.Round(
             writer.WriteEndElement();
         }
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            throw new InvalidOperationException("Use the Angle(XmlReader) constructor to create a new instance instead of calling ReadXml.");
+            /* This class conforms to GML version 3.0.  
+             * 
+             * <gml:angle uom="degrees">123.45678</gml:angle>
+             * 
+            */
+
+            // Move to the <gml:angle> element
+            if (!reader.IsStartElement("angle", Xml.GmlXmlNamespace))
+                reader.ReadToDescendant("angle", Xml.GmlXmlNamespace);
+
+            // Read in the element content
+            // I'm going to assume for now that the unit of measure is degrees.
+            _DecimalDegrees = reader.ReadElementContentAsDouble();
         }
 
         #endregion
