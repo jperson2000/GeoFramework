@@ -718,6 +718,7 @@ namespace GeoFramework
 	public sealed class DateTimeEventArgs : EventArgs
 	{
 		private DateTime _DateTime;
+		private bool _SystemClockUpdated;
 
 		/// <summary>
 		/// Creates a new instance.
@@ -726,6 +727,17 @@ namespace GeoFramework
 		public DateTimeEventArgs(System.DateTime dateTime)
 		{
 			_DateTime = dateTime;
+		}
+
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="dateTime">A DateTime object containing a date and time reported by the GPS device.</param>
+		/// <param name="systemClockUpdated">Indicates whether the system clock was updated to match this DateTime.</param>
+		public DateTimeEventArgs(System.DateTime dateTime, bool systemClockUpdated)
+		{
+			_DateTime = dateTime;
+			_SystemClockUpdated = systemClockUpdated;
 		}
 
 		/// <summary>
@@ -743,78 +755,60 @@ namespace GeoFramework
 				return _DateTime;
 			}
 		}
-	}
-
-	/// <summary>
-	/// Represents information about an exception when an error-related event is raised.
-	/// </summary>
-	/// <remarks>This object is used throughout the GPS.NET framework to provide notification when
-	/// either of two situations occur:
-	/// 
-	/// <list>
-	/// <item>An exception is thrown which cannot be trapped via a Try..Catch block (such as from a separate thread)</item>
-	/// <item>An exception is thrown which can be recovered from and should not halt the current operation.</item>
-	/// </list>
-	/// Most frequently, this class is used when a parsing exception occurs via the Parse method or during automatic
-	/// data collection.</remarks>
-	/// <example>This example demonstrates how to use this class when raising an event.
-	/// <code lang="VB">
-	/// ' Create a new exception
-	/// Dim MyException As New ApplicationException("The error was successfully created.")
-	/// ' Declare a new event
-	/// Dim MyErrorEvent As ExceptionEventHandler
-	/// 
-	/// Sub Main()
-	///   ' Raise our custom event
-	///   RaiseEvent MyErrorEvent(Me, New ExceptionEventArgs(MyException))
-	/// End Sub
-	/// </code>
-	/// <code lang="C#">
-	/// // Create a new exception
-	/// ApplicationException MyException = new ApplicationException("The error was successfully created.")
-	/// // Declare a new event
-	/// ExceptionEventHandler MyErrorEvent;
-	/// 
-	/// void Main()
-	/// {
-	///   // Raise our custom event
-	///   MySatelliteEvent(this, New ExceptionEventArgs(MyException));
-	/// }
-	/// </code>
-	/// </example>
-#if !PocketPC || DesignTime
-#if Framework20
-    //[Obfuscation(Feature = "renaming", Exclude = true, ApplyToMembers = true)]
-    //[Obfuscation(Feature = "controlflow", Exclude = true, ApplyToMembers = true)]
-    //[Obfuscation(Feature = "stringencryption", Exclude = false, ApplyToMembers = true)]
-#endif
-#endif
-	public class ExceptionEventArgs : EventArgs
-	{
-		private Exception _Exception;
 
 		/// <summary>
-		/// Creates a new instance containing the specified exception object.
+		/// Indicates whether the system clock updated to match the <see cref="DateTime"/>.
 		/// </summary>
-		/// <param name="exception">An <strong>Exception</strong> object or derivitive describing the error.</param>
-		public ExceptionEventArgs(Exception exception)
-		{
-			_Exception = exception;
-		}
-
-		/// <summary>
-		/// Indicates information about the error and its location within a module.
-		/// </summary>
-		/// <value>An <strong>ApplicationException</strong> object or derivitive describing the error.</value>
-		public Exception Exception
+		/// <value>
+		/// <see langword="true">True</see> if the system clock was updated; otherwise, <see langword="false"/>.
+		/// The default is <see langword="false"/>.
+		/// </value>
+		public bool SystemClockUpdated
 		{
 			get
 			{
-				return _Exception;
+				return _SystemClockUpdated;
 			}
 		}
 	}
 
+    /// <summary>
+    /// Represents information about an exception when an error-related event is raised.
+    /// </summary>
+    /// <remarks>This object is used throughout the GPS.NET framework to provide notification when
+    /// either of two situations occur:
+    /// 
+    /// <list>
+    /// <item>An exception is thrown which cannot be trapped via a Try..Catch block (such as from a separate thread)</item>
+    /// <item>An exception is thrown which can be recovered from and should not halt the current operation.</item>
+    /// </list>
+    /// Most frequently, this class is used when a parsing exception occurs via the Parse method or during automatic
+    /// data collection.</remarks>
+    /// <example>This example demonstrates how to use this class when raising an event.
+    /// <code lang="VB">
+    /// ' Create a new exception
+    /// Dim MyException As New ApplicationException("The error was successfully created.")
+    /// ' Declare a new event
+    /// Dim MyErrorEvent As ExceptionEventHandler
+    /// 
+    /// Sub Main()
+    ///   ' Raise our custom event
+    ///   RaiseEvent MyErrorEvent(Me, New ExceptionEventArgs(MyException))
+    /// End Sub
+    /// </code>
+    /// <code lang="C#">
+    /// // Create a new exception
+    /// ApplicationException MyException = new ApplicationException("The error was successfully created.")
+    /// // Declare a new event
+    /// ExceptionEventHandler MyErrorEvent;
+    /// 
+    /// void Main()
+    /// {
+    ///   // Raise our custom event
+    ///   MySatelliteEvent(this, New ExceptionEventArgs(MyException));
+    /// }
+    /// </code>
+    /// </example>
 #if !PocketPC || DesignTime
 #if Framework20
     //[Obfuscation(Feature = "renaming", Exclude = true, ApplyToMembers = true)]
@@ -822,7 +816,40 @@ namespace GeoFramework
     //[Obfuscation(Feature = "stringencryption", Exclude = false, ApplyToMembers = true)]
 #endif
 #endif
-	public class ProgressEventArgs : EventArgs
+    public class ExceptionEventArgs : EventArgs
+    {
+        private Exception _Exception;
+
+        /// <summary>
+        /// Creates a new instance containing the specified exception object.
+        /// </summary>
+        /// <param name="exception">An <strong>Exception</strong> object or derivitive describing the error.</param>
+        public ExceptionEventArgs(Exception exception)
+        {
+            _Exception = exception;
+        }
+
+        /// <summary>
+        /// Indicates information about the error and its location within a module.
+        /// </summary>
+        /// <value>An <strong>ApplicationException</strong> object or derivitive describing the error.</value>
+        public Exception Exception
+        {
+            get
+            {
+                return _Exception;
+            }
+        }
+    }
+
+#if !PocketPC || DesignTime
+#if Framework20
+    //[Obfuscation(Feature = "renaming", Exclude = true, ApplyToMembers = true)]
+    //[Obfuscation(Feature = "controlflow", Exclude = true, ApplyToMembers = true)]
+    //[Obfuscation(Feature = "stringencryption", Exclude = false, ApplyToMembers = true)]
+#endif
+#endif
+    public class ProgressEventArgs : EventArgs
     {
         private int _Current;
         private int _Total;
