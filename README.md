@@ -5,8 +5,9 @@ This project contains classes designed to simplify the task of writing Location-
 The entire library is globalized, supporting multiple numeric formats and cultures, and includes design-time type converters to add support for Windows Forms designers.  Most classes also support conversion of values to and from string values.  For example, the **Position** class can output values in a specific format and parse formatted values back into an object.  This project has no dependency on specific UI platforms, allowing it to be used in both GDI+ and WPF applications.
 
 ## Related Projects:
-- [GeoFramework 1.0](http://geoframework1.codeplex.com)
+- [DotSpatial](https://github.com/DotSpatial/DotSpatial)
 - [GPS.NET 3.0](https://github.com/BigstickCarpet/GPS.Net)
+- [GeoFramework 1.0](http://geoframework1.codeplex.com)
 
 
 ## Included Features
